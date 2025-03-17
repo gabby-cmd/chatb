@@ -1,18 +1,20 @@
 import streamlit as st
 from neo4j import GraphDatabase
 import google.generativeai as genai
-import config
 
 # Initialize Gemini API
-genai.configure(api_key=config.GEMINI_API_KEY)
+genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
 model = genai.GenerativeModel("gemini-pro")
 
 # Neo4j Connection
 def get_neo4j_connection():
-    driver = GraphDatabase.driver(config.NEO4J_URI, auth=(config.NEO4J_USER, config.NEO4J_PASSWORD))
+    driver = GraphDatabase.driver(
+        st.secrets["NEO4J_URI"], 
+        auth=(st.secrets["NEO4J_USER"], st.secrets["NEO4J_PASSWORD"])
+    )
     return driver
 
-# Query Neo4j for relevant data
+# Query Neo4j
 def query_neo4j(query):
     with get_neo4j_connection().session() as session:
         result = session.run(query)
